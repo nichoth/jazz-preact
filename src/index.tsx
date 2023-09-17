@@ -10,13 +10,13 @@ import {
     BinaryCoStreamMeta,
 } from 'cojson'
 import { useContext, useEffect, useState } from 'preact/hooks'
-import { Component, ComponentChildren, createContext } from 'preact'
+import { Component, ComponentChildren, FunctionComponent, createContext } from 'preact'
 import {
     AuthProvider,
     createBrowserNode,
     readBlobFromBinaryStream
 } from 'jazz-browser'
-import { PropsWithChildren } from 'preact/compat'
+// import { PropsWithChildren } from 'preact/compat'
 
 export {
     createInviteLink,
@@ -37,15 +37,24 @@ export type PreactAuthHook = () => {
     logOut: () => void;
 }
 
-export function WithJazz ({
-    children,
-    auth: authHook,
-    syncAddress,
-}: {
-    children: ComponentChildren;
+// export function WithJazz ({
+//     children,
+//     auth: authHook,
+//     syncAddress,
+// }: {
+//     // children: ComponentChildren;
+//     auth: PreactAuthHook;
+//     syncAddress?: string;
+// }) {
+
+interface Props {
+    children?: ComponentChildren;
     auth: PreactAuthHook;
     syncAddress?: string;
-} & PropsWithChildren) {
+}
+
+export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
+    const { auth: authHook, syncAddress } = props
     const [node, setNode] = useState<LocalNode | undefined>()
 
     const { auth, AuthUI, logOut } = authHook()
@@ -84,8 +93,9 @@ export function WithJazz ({
     return (
         <>
             {node ? (
+                // @ts-ignore
                 <JazzContext.Provider value={{ localNode: node, logOut }}>
-                    <>{children}</>
+                    <>{props.children}</>
                 </JazzContext.Provider>
             ) : (
                 AuthUI
