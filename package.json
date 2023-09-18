@@ -15,6 +15,7 @@
     "prepublishOnly": "npm run build"
   },
   "dependencies": {
+    "@nichoth/components": "0.3.2",
     "cojson": "0.2.2",
     "jazz-browser": "0.2.4",
     "preact": "^10.17.1",
