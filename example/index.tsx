@@ -26,8 +26,8 @@ function Example () {
 function App () {
     const { localNode, logOut } = useJazz()
     // This sets up routing and accepting invites
-    const [currentProjectId, navigateToProjectId] =
-        useSimpleHashRouterThatAcceptsInvites<TodoProject>(localNode)
+    // const [currentProjectId, navigateToProjectId] =
+    //     useSimpleHashRouterThatAcceptsInvites<TodoProject>(localNode)
 
     const createProject = useCallback(
         (title: string) => {
@@ -36,7 +36,7 @@ function App () {
             // To create a new todo project, we first create a `Group`,
             // which is a scope for defining access rights (reader/writer/admin)
             // of its members, which will apply to all CoValues owned by that group.
-            const projectGroup = localNode.createGroup();
+            const projectGroup = localNode.createGroup()
 
             // Then we create an empty todo project and list of tasks within that group.
             const project = projectGroup.createMap<TodoProject>()
@@ -63,7 +63,7 @@ function App () {
 }
 
 const CreateNew:FunctionComponent<{
-    onCreate:(name:string)=>void 
+    onCreate:(name:string)=>void
 }> = function createNew (props) {
     const { onCreate } = props
 
