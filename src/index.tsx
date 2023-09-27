@@ -10,13 +10,13 @@ import {
     BinaryCoStreamMeta,
 } from 'cojson'
 import { useContext, useEffect, useState } from 'preact/hooks'
-import { Component, ComponentChildren, FunctionComponent, createContext } from 'preact'
+import { ComponentChildren, FunctionComponent, createContext } from 'preact'
 import {
-    AuthProvider,
+    // AuthProvider,
     createBrowserNode,
     readBlobFromBinaryStream
 } from 'jazz-browser'
-// import { PropsWithChildren } from 'preact/compat'
+import { AuthHook, AuthStatus } from './jazz-preact-auth-local.jsx'
 
 export {
     createInviteLink,
@@ -25,39 +25,28 @@ export {
 } from 'jazz-browser'
 
 type JazzContextType = {
-    localNode: LocalNode;
-    logOut: () => void;
+    localNode?: LocalNode;
+    logOut?: () => void;
+    auth:AuthStatus;
 };
 
 const JazzContext = createContext<JazzContextType | undefined>(undefined)
 
-export type PreactAuthHook = () => {
-    auth: AuthProvider;
-    AuthUI: Component;
-    logOut: () => void;
-}
-
-// export function WithJazz ({
-//     children,
-//     auth: authHook,
-//     syncAddress,
-// }: {
-//     // children: ComponentChildren;
-//     auth: PreactAuthHook;
-//     syncAddress?: string;
-// }) {
-
 interface Props {
+    authHook:AuthHook;
     children?: ComponentChildren;
-    auth: PreactAuthHook;
     syncAddress?: string;
 }
 
+/**
+ * This is where we create the authStatus
+ */
+
 export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
-    const { auth: authHook, syncAddress } = props
+    const { authHook, syncAddress } = props
     const [node, setNode] = useState<LocalNode | undefined>()
 
-    const { auth, AuthUI, logOut } = authHook()
+    const { auth, logOut } = authHook()
 
     useEffect(() => {
         let done: (() => void) | undefined
@@ -65,7 +54,7 @@ export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
 
         (async () => {
             const nodeHandle = await createBrowserNode({
-                auth: auth,
+                auth,
                 syncAddress:
                     syncAddress ||
                     new URLSearchParams(window.location.search).get('sync') ||
@@ -80,8 +69,8 @@ export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
             setNode(nodeHandle.node)
 
             done = nodeHandle.done
-        })().catch((e) => {
-            console.log('Failed to create browser node', e)
+        })().catch((err) => {
+            console.log('Failed to create browser node', err)
         })
 
         return () => {
@@ -90,18 +79,11 @@ export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
         }
     }, [auth, syncAddress])
 
-    return (
-        <>
-            {node ? (
-                // @ts-ignore
-                <JazzContext.Provider value={{ localNode: node, logOut }}>
-                    <>{props.children}</>
-                </JazzContext.Provider>
-            ) : (
-                AuthUI
-            )}
-        </>
-    )
+    // ??? how to deal with types + component children?
+    // @ts-ignore
+    return (<JazzContext.Provider value={{ auth, localNode: node, logOut }}>
+        {props.children}
+    </JazzContext.Provider>)
 }
 
 export function useJazz () {
@@ -120,7 +102,7 @@ export function useTelepathicState<T extends CoValueImpl> (id?: CoID<T>) {
     const { localNode } = useJazz()
 
     useEffect(() => {
-        if (!id) return
+        if (!id || !localNode) return
         let unsubscribe: (() => void) | undefined
 
         let done = false
@@ -164,6 +146,7 @@ export function useProfile<
     const { localNode } = useJazz()
 
     useEffect(() => {
+        if (!localNode) return
         accountID &&
             localNode
                 .loadProfile(accountID)
@@ -187,7 +170,7 @@ export function useBinaryStream<C extends BinaryCoStream<BinaryCoStreamMeta>> (
     >()
 
     useEffect(() => {
-        if (!stream) return
+        if (!stream || !localNode) return
         readBlobFromBinaryStream(stream.id, localNode, allowUnfinished)
             .then((blob) =>
                 setBlob(

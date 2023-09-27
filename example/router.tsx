@@ -1,50 +1,24 @@
-import CreateRouter from '@nichoth/routes'
+import Router from '@nichoth/routes'
+import { Login } from './pages/login.jsx'
+import { MainView } from './pages/main.jsx'
+import { Home } from './pages/home.jsx'
 
-export function Router () {
-    const router = CreateRouter()
+export default function _Router ():ReturnType<Router> {
+    const router = Router()
 
-    router.addRoute('/', (match) => {
-        return (<div>
-            hello
-        </div>)
+    router.addRoute('/', () => {
+        return Home
     })
+
+    router.addRoute('/login', () => {
+        return Login
+    })
+
+    router.addRoute('/id/:id', (match) => {
+        return (props) => {
+            return MainView({ ...props, params: match.params })
+        }
+    })
+
+    return router
 }
-
-// import { useCallback, useEffect, useState } from 'preact/hooks'
-// import { CoID, LocalNode, CoValueImpl } from 'cojson'
-// import { consumeInviteLinkFromWindowLocation } from 'jazz-browser'
-
-// export function useSimpleHashRouterThatAcceptsInvites<C extends CoValueImpl> (
-//     localNode: LocalNode
-// ) {
-//     const [currentValueId, setCurrentValueId] = useState<CoID<C>>()
-
-//     useEffect(() => {
-//         const listener = async () => {
-//             const acceptedInvitation =
-//                 await consumeInviteLinkFromWindowLocation<C>(localNode)
-
-//             if (acceptedInvitation) {
-//                 setCurrentValueId(acceptedInvitation.valueID)
-//                 window.location.hash = acceptedInvitation.valueID
-//                 return
-//             }
-
-//             setCurrentValueId(
-//                 (window.location.hash.slice(1) as CoID<C>) || undefined
-//             )
-//         }
-//         window.addEventListener('hashchange', listener)
-//         listener()
-
-//         return () => {
-//             window.removeEventListener('hashchange', listener)
-//         }
-//     }, [localNode])
-
-//     const navigateToValue = useCallback((id: CoID<C> | undefined) => {
-//         window.location.hash = id || ''
-//     }, [])
-
-//     return [currentValueId, navigateToValue] as const
-// }

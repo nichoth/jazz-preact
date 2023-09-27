@@ -1,7 +1,7 @@
-import { CoMap, CoList, CoID } from 'cojson'
+import { CoList, CoID, CoMap } from 'cojson'
 
 /** An individual task which collaborators can tick or rename */
-export type Task = CoMap<{ done: boolean; text: string; }>
+export type Task = CoMap<{ done: boolean; text: string; }>;
 
 /** A collaborative, ordered list of task references */
 export type ListOfTasks = CoList<CoID<Task>>;
@@ -10,4 +10,4 @@ export type ListOfTasks = CoList<CoID<Task>>;
 export type TodoProject = CoMap<{
     title: string;
     tasks: CoID<ListOfTasks>;
-}>
+}>;

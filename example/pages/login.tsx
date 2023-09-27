@@ -1,16 +1,56 @@
-import { FunctionComponent } from "preact";
+import { FunctionComponent } from 'preact'
+import { Signal } from '@preact/signals'
+import { useState, useEffect } from 'preact/hooks'
+import { Events, Invitation } from '../state.js'
+import { Button } from '../components/button.jsx'
+import { TextInput } from '../components/text-input.jsx'
+import { AuthStatus } from '../../src/jazz-preact-auth-local.jsx'
+import '../components/button.css'
+import '../components/text-input.css'
+import './login.css'
+import { Divider } from '../components/divider.jsx'
+const evs = Events.login
 
-export function Login ({ authStatus, emit }:{
+/*
+   type AuthStatus = {
+        status: null;
+    } | {
+        status: 'loading';
+    } | {
+        status: 'ready';
+        logIn: () => void;
+        signUp: (username: string) => void;
+    } | {
+        status: 'signedIn';
+        logOut: () => void;
+    }
+ */
+
+export const Login:FunctionComponent<{
     authStatus: Signal<AuthStatus|null>;
-    emit:{ (name, data):void, events:Record<string, string> }
-}):FunctionComponent {
+    // auth:AuthProvider;
+    invitation: Signal<Invitation|null>;
+    setRoute:(path:string)=>void;
+    next:Signal<string>;
+    emit:(name:string, data:any)=>void
+}> = function Login ({ setRoute, authStatus, emit, next }) {
     const [isValid, setValid] = useState(false)
 
-    if (authStatus.value && authStatus.value.status === 'loading') {
-        return (<div className="loading">
-            loading...
-        </div>)
-    }
+    // if (authStatus.value && authStatus.value.state === 'loading') {
+    //     return (<div className="loading">
+    //         loading...
+    //     </div>)
+    // }
+
+    /**
+     * Do not show this page if you are logged in
+     */
+    useEffect(() => {
+        if (authStatus.state === 'signedIn') {
+            console.log('set that route')
+            setRoute(next.value || '/')
+        }
+    }, [authStatus.value])
 
     // need this because `onInput` event doesnt work for cmd + delete event
     async function onFormKeydown (ev:KeyboardEvent) {
@@ -29,12 +69,6 @@ export function Login ({ authStatus, emit }:{
         if (_isValid !== isValid) setValid(_isValid)
     }
 
-    useEffect(() => {
-        if (authStatus.value?.status === 'signedIn') {
-            setRoute('/')
-        }
-    }, [authStatus.value])
-
     async function handleFormClick (ev:MouseEvent) {
         ev.preventDefault()
 
@@ -43,22 +77,22 @@ export function Login ({ authStatus, emit }:{
             if (!type) return
 
             if (type === 'login') {
-                return emit((evs as NamespacedEvents).login as string, null)
+                // @ts-ignore
+                return emit(evs.login, next.value)
             }
 
             // type must be 'create'
             const username = ((ev.target as HTMLButtonElement).form!.elements
                 .namedItem('username') as HTMLInputElement).value
 
-            await (authStatus.value as ReadyStatus).signUp(username)
-
-            setRoute('/')
+            // @ts-ignore
+            emit(evs.createAccount, { username })
         } catch (err) {
             console.log('errrrr', err)
         }
     }
 
-    return (authStatus.value && authStatus.value.status === 'ready') ?
+    return (authStatus.value && authStatus.value.state === 'ready') ?
         (<div className="ready">
             <h2>Login</h2>
 

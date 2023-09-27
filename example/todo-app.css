@@ -1,0 +1,47 @@
+body {
+    margin: 8px;
+}
+
+h2 {
+    background-color: #fbd2d2;
+    padding: 0.5rem;
+}
+
+#root {
+    font-family: sans-serif;
+
+    & .logout {
+        margin: 2rem auto;
+        position: absolute;
+        bottom: 0;
+        text-align: right;
+        right: 1rem;
+    }
+
+    & > div {
+        /* -16 for the body's margin */
+        width: min(40rem, calc(100vw - 16px));
+        margin: 0 auto;
+    }
+}
+
+.control {
+    margin-bottom: 1rem;
+}
+
+.input-group {
+    margin-bottom: 1rem!important;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+h2 {
+    font-size: 1.4rem;
+}
+
+h3 {
+    margin-bottom: 0.5rem;
+}
