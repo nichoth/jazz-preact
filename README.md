@@ -11,6 +11,7 @@ npm i -S @nichoth/jazz-preact
 See [the example folder](./example/). The two functions you need to think about are `WithJazz` and `useJazz`.
 
 ```tsx
+// index.tsx
 import { render } from 'preact'
 import { TodoApp } from './todo-app.jsx'
 import { WithJazz } from '@nichoth/jazz-preact'
