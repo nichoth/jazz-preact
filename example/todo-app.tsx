@@ -9,7 +9,6 @@ import './todo-app.css'
 /**
  * The top level view component. This is always rendered.
  *   - Setup routing
- *   - Parse invitations
  *   - redirect to `/login` if not authed
  */
 export const TodoApp:FunctionComponent<{

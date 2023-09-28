@@ -7,7 +7,10 @@ npm i -S @nichoth/jazz-preact
 ```
 
 ## example
-See [the example folder](./example/). The two functions you need to think about are `WithJazz` and `useJazz`.
+See [the example folder](./example/). The three functions you need to think about are `WithJazz`, `useJazz`, and `useTelepathicState`.
+
+### WithJazz
+Create the `context` for Jazz.
 
 ```tsx
 // index.tsx
@@ -24,9 +27,12 @@ render(<WithJazz useAuth={useLocalAuth}>
 </WithJazz>, document.getElementById('root')!)
 ```
 
+### useJazz
+Get a reference to a Jazz node. Consume Jazz references anywhere in the view tree like this.
+
 ```jsx
 // todo-app.tsx
-import { useJazz } from '../src/index.jsx'
+import { useJazz } from '@nichoth/jazz-preact'
 
 export function TodoApp () {
     const { localNode, logOut, authStatus } = useJazz()
@@ -40,6 +46,46 @@ export function TodoApp () {
             authStatus={authStatus}
         />
         <LogoutControl onLogout={logOut!} />
+    </div>)
+}
+```
+
+### useTelepathicState
+Takes an optional `id` attribute, which should be an ID for a `CoValue` that is a todo list.
+
+```tsx
+// pages/main.tsx
+import { useTelepathicState } from '@nichoth/jazz-preact'
+
+function MainView ({ params }) {
+    const project = useTelepathicState<TodoProject>(params.id as CoID<TodoProject>)
+    const tasks = useTelepathicState<ListOfTasks>(project?.get('tasks'))
+
+    // ...
+
+    return (<div>
+        <h2>{project?.get('title')}</h2>
+
+        <ul className="todo-list">
+            {tasks?.map((taskId:CoID<Task>) => {
+                const task = useTelepathicState(taskId)
+
+                return (<li key={taskId}>
+                    <form onChange={handleChange.bind(null, task)}>
+                        <label>
+                            <input checked={task?.get('done') || false}
+                                type="checkbox"
+                                name="done-status"
+                            />
+                            {task?.get('done') ?
+                                (<s>{task.get('text')}</s>) :
+                                (<span>{task?.get('text')}</span>)
+                            }
+                        </label>
+                    </form>
+                </li>)
+            })}
+        </ul>
     </div>)
 }
 ```

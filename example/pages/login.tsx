@@ -1,21 +1,16 @@
 import { FunctionComponent } from 'preact'
-import { Signal } from '@preact/signals'
 import { useState } from 'preact/hooks'
-import { LocalNode } from 'cojson'
-import { Invitation } from '../state.js'
 import { Button } from '../components/button.jsx'
 import { TextInput } from '../components/text-input.jsx'
 import { AuthStatus, ReadyStatus } from '../../src/jazz-preact-auth-local.jsx'
+import { Divider } from '../components/divider.jsx'
 import '../components/button.css'
 import '../components/text-input.css'
 import './login.css'
-import { Divider } from '../components/divider.jsx'
 
 export const Login:FunctionComponent<{
-    authStatus: AuthStatus;
-    invitation: Signal<Invitation|null>;
     setRoute:(path:string)=>void;
-    localNode:LocalNode
+    authStatus: AuthStatus;
     next:string;
 }> = function Login ({ setRoute, authStatus, next }) {
     const [isValid, setValid] = useState(false)
