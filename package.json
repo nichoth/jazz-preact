@@ -1,4 +1,10 @@
 {
+  "name": "@nichoth/jazz-preact",
+  "description": "Use preact hooks with Jazz",
+  "directories": {
+    "example": "example",
+    "test": "test"
+  },
   "type": "module",
   "version": "0.0.0",
   "main": "dist/index.js",
@@ -8,7 +14,7 @@
     "build-tests": "esbuild test/index.ts --bundle --format=cjs --keep-names > test/test-bundle.js",
     "test": "npm run lint && npm run build && npm run build-tests && npm run test-tape-run",
     "test-tape-run": "cat test/index.html | tape-run --input=html --static=test | tap-arc",
-    "build-cjs": "esbuild src/*.ts --format=cjs --tsconfig=tsconfig.build.json --keep-names --outdir=./dist --out-extension:.js=.cjs",
+    "build-cjs": "esbuild src/*.{ts,tsx} --format=cjs --tsconfig=tsconfig.build.json --keep-names --outdir=./dist --out-extension:.js=.cjs",
     "build": "mkdir -p ./dist && rm -rf ./dist/* && npm run build-cjs && tsc --project tsconfig.build.json",
     "preversion": "npm run lint",
     "postversion": "git push && git push --tags && npm publish",
@@ -53,5 +59,18 @@
     }
   },
   "author": "nichoth <nichoth@gmail.com> (https://nichoth.com)",
-  "license": "AGPL-3.0-or-later"
+  "license": "AGPL-3.0-or-later",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nichoth/jazz-preact.git"
+  },
+  "keywords": [
+    "preact",
+    "jazz"
+  ],
+  "bugs": {
+    "url": "https://github.com/nichoth/jazz-preact/issues"
+  },
+  "homepage": "https://github.com/nichoth/jazz-preact#readme"
 }
