@@ -3,25 +3,26 @@ import { useState, useMemo } from 'preact/hooks'
 import { BrowserLocalAuth } from 'jazz-browser-auth-local'
 import { AuthProvider } from 'jazz-browser'
 
-// export type LocalAuthComponent = (props: {
-//     loading: boolean;
-//     logIn: () => void;
-//     signUp: (username: string) => void;
-// }) => FunctionComponent
+export type LoadingStatus = { state: 'loading' }
+export type ReadyStatus = {
+    state: 'ready';
+    logIn: () => Promise<void>;
+    signUp: (username:string) => Promise<void>;
+}
+export type SignedInStatus = {
+    state: 'signedIn';
+    logOut: () => void;
+}
+export type AuthStatus = { state:null } |
+    LoadingStatus |
+    ReadyStatus |
+    SignedInStatus
 
 export type AuthHook = () => {
-    auth: AuthProvider;
+    provider: AuthProvider;
+    authStatus:AuthStatus;
     logOut?: () => void;
 };
-
-export type AuthStatus =
-    | { state: 'loading' }
-    | {
-        state: 'ready';
-        logIn:() => void;
-        signUp: (username: string) => void;
-    }
-    | { state: 'signedIn'; logOut: () => void; }
 
 export function LocalAuth ({
     appName,
@@ -65,7 +66,7 @@ export function LocalAuth ({
         }, [appName, appHostname, logOutCounter])
 
         return {
-            auth,
+            provider: auth,
             authStatus,
             logOut:
                 authStatus.state === 'signedIn' ? authStatus.logOut : undefined,

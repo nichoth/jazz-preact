@@ -6,6 +6,6 @@ import { LocalAuth } from '../src/jazz-preact-auth-local.jsx'
 const appName = 'Preact todo example'
 const useLocalAuth = LocalAuth({ appName })
 
-render(<WithJazz authHook={useLocalAuth}>
+render(<WithJazz useAuth={useLocalAuth}>
     <TodoApp appName={appName} />
 </WithJazz>, document.getElementById('root')!)

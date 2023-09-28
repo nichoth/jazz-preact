@@ -1,10 +1,9 @@
 import { FunctionComponent } from 'preact'
 import { useState, useCallback } from 'preact/hooks'
 import { LocalNode, CoID, CoValueImpl } from 'cojson'
-import { Signal } from '@preact/signals'
 import { createInviteLink } from 'jazz-browser'
 import { Toast } from '../components/toast.jsx'
-import { Task, TodoProject } from '../types.js'
+import { ListOfTasks, Task, TodoProject } from '../types.js'
 import { Button } from '../components/button.jsx'
 import { NewTaskInputRow } from '../components/new-task.jsx'
 import { useTelepathicState } from '../../src/index.jsx'
@@ -17,18 +16,15 @@ import './main.css'
  * The todo list ID comes from the URL -- /id/<projectId>
  */
 export const MainView:FunctionComponent<{
-    params:{ id:CoID<CoValueImpl> }
-    localNode:Signal<LocalNode|null>
-    emit:(a:any, b:any)=>any
+    params:{ id:CoID<CoValueImpl> };
+    localNode:LocalNode|null;
+    emit:(a:any, b:any)=>any;
 }> = function MainView ({
     localNode,
     params,
 }) {
-    const project = useTelepathicState(params.id)
-    // Property 'get' does not exist on type 'CoValueImpl'.
-    // Property 'get' does not exist on type 'CoStream<JsonValue, JsonObject | null>'.
-    // @ts-ignore
-    const tasks = useTelepathicState(project?.get('tasks'))
+    const project = useTelepathicState<TodoProject>(params.id as CoID<TodoProject>)
+    const tasks = useTelepathicState<ListOfTasks>(project?.get('tasks'))
 
     // `createTask` is similar to `createProject` we saw earlier, creating a new CoMap
     // for a new task (in the same group as the list of tasks/the project), and then
@@ -57,17 +53,17 @@ export const MainView:FunctionComponent<{
 
     return (<div>
         <h2>List</h2>
-        {/* @ts-ignore */}
         <h3>{project?.get('title')}</h3>
         <ul className="todo-list">
-            {/* @ts-ignore */}
-            {tasks?.map((taskId: CoID<Task>) => {
+            {tasks?.map((taskId:CoID<Task>) => {
                 const task = useTelepathicState(taskId)
 
                 return (<li key={taskId}>
                     <form onChange={handleChange.bind(null, task)}>
                         <label>
+                            {/* <input defaultChecked={task?.get('done') || false} */}
                             <input defaultChecked={task?.get('done') || false}
+                                checked={task?.get('done') || false}
                                 type="checkbox"
                                 name="done-status"
                             />
@@ -90,8 +86,6 @@ export const MainView:FunctionComponent<{
         </div>
 
         {project ?
-            // ??? why do types fail
-            // @ts-ignore
             <InvitationLinkControl list={project} /> :
             null
         }

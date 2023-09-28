@@ -1,56 +1,33 @@
 import { FunctionComponent } from 'preact'
 import { Signal } from '@preact/signals'
-import { useState, useEffect } from 'preact/hooks'
-import { Events, Invitation } from '../state.js'
+import { useState } from 'preact/hooks'
+import { LocalNode } from 'cojson'
+import { Invitation } from '../state.js'
 import { Button } from '../components/button.jsx'
 import { TextInput } from '../components/text-input.jsx'
-import { AuthStatus } from '../../src/jazz-preact-auth-local.jsx'
+import { AuthStatus, ReadyStatus } from '../../src/jazz-preact-auth-local.jsx'
 import '../components/button.css'
 import '../components/text-input.css'
 import './login.css'
 import { Divider } from '../components/divider.jsx'
-const evs = Events.login
-
-/*
-   type AuthStatus = {
-        status: null;
-    } | {
-        status: 'loading';
-    } | {
-        status: 'ready';
-        logIn: () => void;
-        signUp: (username: string) => void;
-    } | {
-        status: 'signedIn';
-        logOut: () => void;
-    }
- */
 
 export const Login:FunctionComponent<{
-    authStatus: Signal<AuthStatus|null>;
-    // auth:AuthProvider;
+    authStatus: AuthStatus;
     invitation: Signal<Invitation|null>;
     setRoute:(path:string)=>void;
-    next:Signal<string>;
-    emit:(name:string, data:any)=>void
-}> = function Login ({ setRoute, authStatus, emit, next }) {
+    localNode:LocalNode
+    next:string;
+}> = function Login ({ setRoute, authStatus, next }) {
     const [isValid, setValid] = useState(false)
-
-    // if (authStatus.value && authStatus.value.state === 'loading') {
-    //     return (<div className="loading">
-    //         loading...
-    //     </div>)
-    // }
 
     /**
      * Do not show this page if you are logged in
      */
-    useEffect(() => {
-        if (authStatus.state === 'signedIn') {
-            console.log('set that route')
-            setRoute(next.value || '/')
-        }
-    }, [authStatus.value])
+    // useEffect(() => {
+    //     if (authStatus.state === 'signedIn') {
+    //         setRoute(next || '/')
+    //     }
+    // }, [authStatus.state])
 
     // need this because `onInput` event doesnt work for cmd + delete event
     async function onFormKeydown (ev:KeyboardEvent) {
@@ -77,22 +54,21 @@ export const Login:FunctionComponent<{
             if (!type) return
 
             if (type === 'login') {
-                // @ts-ignore
-                return emit(evs.login, next.value)
+                return await (authStatus as ReadyStatus).logIn()
             }
 
             // type must be 'create'
             const username = ((ev.target as HTMLButtonElement).form!.elements
                 .namedItem('username') as HTMLInputElement).value
 
-            // @ts-ignore
-            emit(evs.createAccount, { username })
+            await (authStatus as ReadyStatus).signUp(username)
+            setRoute(next || '/')
         } catch (err) {
             console.log('errrrr', err)
         }
     }
 
-    return (authStatus.value && authStatus.value.state === 'ready') ?
+    return (authStatus.state === 'ready') ?
         (<div className="ready">
             <h2>Login</h2>
 

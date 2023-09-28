@@ -17,9 +17,10 @@ export const TodoApp:FunctionComponent<{
     syncAddress?:string,
     appHostName?:string,
 }> = function TodoApp ({
-    appName
+    appName,
 }) {
-    const [routeState, setRouteState] = useState<string|null>(null)
+    const [routeState, setRouteState] = useState<string>(location.pathname +
+        location.search)
 
     // if `/login` is the original page we loaded,
     // then set the next path to '/'
@@ -47,7 +48,7 @@ export const TodoApp:FunctionComponent<{
         return route
     }, [routeEvent])
 
-    const { localNode, logOut, auth } = useJazz()
+    const { localNode, logOut, authStatus } = useJazz()
 
     const signedIn = useMemo<boolean>(() => {
         return !!logOut
@@ -72,8 +73,11 @@ export const TodoApp:FunctionComponent<{
 
     return (<div>
         <h1>{appName}</h1>
-        <Element params={match.params} localNode={localNode} auth={auth} />
-        <LogoutControl onLogout={logOut!} isSignedIn={!!localNode} />
+        <Element params={match.params} localNode={localNode}
+            authStatus={authStatus}
+            setRoute={routeEvent.setRoute.bind(routeEvent)}
+        />
+        <LogoutControl onLogout={logOut!} isSignedIn={signedIn} />
     </div>)
 }
 

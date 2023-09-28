@@ -12,7 +12,6 @@ import {
 import { useContext, useEffect, useState } from 'preact/hooks'
 import { ComponentChildren, FunctionComponent, createContext } from 'preact'
 import {
-    // AuthProvider,
     createBrowserNode,
     readBlobFromBinaryStream
 } from 'jazz-browser'
@@ -27,26 +26,22 @@ export {
 type JazzContextType = {
     localNode?: LocalNode;
     logOut?: () => void;
-    auth:AuthStatus;
+    authStatus:AuthStatus;
 };
 
 const JazzContext = createContext<JazzContextType | undefined>(undefined)
 
 interface Props {
-    authHook:AuthHook;
+    useAuth:AuthHook;
     children?: ComponentChildren;
     syncAddress?: string;
 }
 
-/**
- * This is where we create the authStatus
- */
-
 export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
-    const { authHook, syncAddress } = props
+    const { useAuth, syncAddress } = props
     const [node, setNode] = useState<LocalNode | undefined>()
 
-    const { auth, logOut } = authHook()
+    const { provider, logOut, authStatus } = useAuth()
 
     useEffect(() => {
         let done: (() => void) | undefined
@@ -54,7 +49,7 @@ export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
 
         (async () => {
             const nodeHandle = await createBrowserNode({
-                auth,
+                auth: provider,
                 syncAddress:
                     syncAddress ||
                     new URLSearchParams(window.location.search).get('sync') ||
@@ -77,11 +72,15 @@ export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
             stop = true
             done && done()
         }
-    }, [auth, syncAddress])
+    }, [useAuth, syncAddress])
 
     // ??? how to deal with types + component children?
     // @ts-ignore
-    return (<JazzContext.Provider value={{ auth, localNode: node, logOut }}>
+    return (<JazzContext.Provider value={{
+        localNode: node,
+        logOut,
+        authStatus
+    }}>
         {props.children}
     </JazzContext.Provider>)
 }

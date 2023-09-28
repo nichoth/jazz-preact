@@ -1,10 +1,10 @@
 import { FunctionComponent } from 'preact'
-import { useState } from 'preact/hooks'
+import { useState, useCallback } from 'preact/hooks'
+import { LocalNode } from 'cojson'
+import { TodoProject, ListOfTasks } from '../types.js'
 import { TextInput } from '../components/text-input.jsx'
 import { Button } from '../components/button.jsx'
-import { Events } from '../state.js'
 import './home.css'
-const evs = Events.home
 
 /**
  * Home view
@@ -12,13 +12,38 @@ const evs = Events.home
  * Otherwise, you see the route `main`
  * @returns {FunctionComponent}
  */
-export function Home ({ emit }):FunctionComponent<{
-    emit: (name:string, data:any) => void;
+export function Home ({ localNode, setRoute }:{
+    localNode:LocalNode;
+    setRoute:(path:string)=>void
+}):FunctionComponent<{
+    localNode:LocalNode
+    setRoute:(path:string)=>void
 }> {
+    const createProject = useCallback((title: string) => {
+        if (!title) return
+
+        // To create a new todo project, we first create a `Group`,
+        // which is a scope for defining access rights (reader/writer/admin)
+        // of its members, which will apply to all CoValues owned by that group.
+        const projectGroup = localNode.createGroup()
+
+        // Then we create an empty todo project and list of tasks within that group.
+        const project = projectGroup.createMap<TodoProject>()
+        const tasks = projectGroup.createList<ListOfTasks>()
+
+        // We edit the todo project to initialise it.
+        // Inside the `.edit` callback we can mutate a CoValue
+        project.edit((project) => {
+            project.set('title', title)
+            project.set('tasks', tasks.id)
+        })
+
+        setRoute(`/id/${project.id}`)
+    }, [localNode])
+
     return (<div className="route home">
         <h2>Create a new todo-list</h2>
-        {/* @ts-ignore */}
-        <NewList onSubmit={emit(evs.createList)} />
+        <NewList onSubmit={createProject} />
     </div>)
 }
 
