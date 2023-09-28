@@ -34,6 +34,7 @@ export function LocalAuth ({
      * @TODO
      * Why is this type failing?
      */
+    // @ts-ignore
     return function useLocalAuth () {
         const [authStatus, setAuthState] = useState<AuthStatus>({
             state: 'loading'

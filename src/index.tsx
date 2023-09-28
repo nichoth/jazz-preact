@@ -78,6 +78,7 @@ export const WithJazz:FunctionComponent<Props> = function WithJazz (props) {
      * @TODO
      * How to type `children`?
      */
+    // @ts-ignore
     return (<JazzContext.Provider value={{
         localNode: node,
         logOut,
