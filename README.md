@@ -1,5 +1,5 @@
 # jazz preact
-Like [jazz-react](https://github.com/gardencmp/jazz/blob/main/DOCS.md/#jazz-react), this exposes hooks that help deal with auth status and telepathic state, but using [preact](https://preactjs.com/), instead of `react`.
+Like [jazz-react](https://github.com/gardencmp/jazz/blob/main/DOCS.md/#jazz-react). This exposes hooks that help with auth and telepathic state, but using [preact](https://preactjs.com/) instead of `react`.
 
 ## install 
 ```bash
