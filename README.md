@@ -13,7 +13,7 @@ See [the example folder](./example/). The three functions you need to think abou
 Create the `context` for Jazz.
 
 ```tsx
-// index.tsx
+// example/index.tsx
 import { render } from 'preact'
 import { TodoApp } from './todo-app.jsx'
 import { WithJazz } from '@nichoth/jazz-preact'
