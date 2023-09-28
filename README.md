@@ -22,6 +22,7 @@ import { LocalAuth } from '@nichoth/jazz-preact/jazz-preact-auth-local.js'
 const appName = 'Preact todo example'
 const useLocalAuth = LocalAuth({ appName })
 
+// takes an auth hook, and provides the `AuthStatus` to children
 render(<WithJazz useAuth={useLocalAuth}>
     <TodoApp appName={appName} />
 </WithJazz>, document.getElementById('root')!)
