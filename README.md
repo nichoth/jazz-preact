@@ -31,8 +31,8 @@ render(<WithJazz useAuth={useLocalAuth}>
 ### useJazz
 Get a reference to a Jazz node. Call this in a child node of `WhithJazz`, above.
 
-```jsx
-// todo-app.tsx
+```tsx
+// example/todo-app.tsx
 import { useJazz } from '@nichoth/jazz-preact'
 
 export function TodoApp () {
@@ -55,8 +55,10 @@ export function TodoApp () {
 Takes an optional `id` attribute, which should be the ID for a `CoValue`. 
 
 ```tsx
-// pages/main.tsx
+// example/pages/main.tsx
+import { CoID, CoValueImpl } from 'cojson'
 import { useTelepathicState } from '@nichoth/jazz-preact'
+import { ListOfTasks, Task, TodoProject } from '../types.js'
 
 function MainView ({ params }) {
     const project = useTelepathicState<TodoProject>(params.id as CoID<TodoProject>)
