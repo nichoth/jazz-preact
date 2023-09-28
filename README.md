@@ -1,5 +1,4 @@
-# jazz preact ![tests](https://github.com/nichoth/jazz-preact/actions/workflows/nodejs.yml/badge.svg)
-
+# jazz preact
 Like [jazz-react](https://github.com/gardencmp/jazz/blob/main/DOCS.md/#jazz-react), this exposed hooks that help deal with auth status and telepathic state, but this uses [preact](https://preactjs.com/), not `react`.
 
 ## install 
