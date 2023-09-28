@@ -20,15 +20,6 @@ export const Login:FunctionComponent<{
 }> = function Login ({ setRoute, authStatus, next }) {
     const [isValid, setValid] = useState(false)
 
-    /**
-     * Do not show this page if you are logged in
-     */
-    // useEffect(() => {
-    //     if (authStatus.state === 'signedIn') {
-    //         setRoute(next || '/')
-    //     }
-    // }, [authStatus.state])
-
     // need this because `onInput` event doesnt work for cmd + delete event
     async function onFormKeydown (ev:KeyboardEvent) {
         const key = ev.key

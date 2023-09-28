@@ -1,4 +1,3 @@
-// import { FunctionComponent } from 'preact'
 import { useState, useMemo } from 'preact/hooks'
 import { BrowserLocalAuth } from 'jazz-browser-auth-local'
 import { AuthProvider } from 'jazz-browser'
@@ -31,7 +30,10 @@ export function LocalAuth ({
     appName: string;
     appHostname?: string;
 }):AuthHook {
-    // @ts-ignore
+    /**
+     * @TODO
+     * Why is this type failing?
+     */
     return function useLocalAuth () {
         const [authStatus, setAuthState] = useState<AuthStatus>({
             state: 'loading'

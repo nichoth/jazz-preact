@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'preact'
 import { useState, useCallback } from 'preact/hooks'
-import { LocalNode, CoID, CoValueImpl } from 'cojson'
+import { CoID, CoValueImpl } from 'cojson'
 import { createInviteLink } from 'jazz-browser'
 import { Toast } from '../components/toast.jsx'
 import { ListOfTasks, Task, TodoProject } from '../types.js'
@@ -17,10 +17,7 @@ import './main.css'
  */
 export const MainView:FunctionComponent<{
     params:{ id:CoID<CoValueImpl> };
-    localNode:LocalNode|null;
-    emit:(a:any, b:any)=>any;
 }> = function MainView ({
-    localNode,
     params,
 }) {
     const project = useTelepathicState<TodoProject>(params.id as CoID<TodoProject>)
@@ -38,8 +35,6 @@ export const MainView:FunctionComponent<{
             task.set('done', false)
         })
 
-        // ??? why do types fail?
-        // @ts-ignore
         tasks.edit(projectTasks => {
             projectTasks.push(task.id)
         })
@@ -61,9 +56,7 @@ export const MainView:FunctionComponent<{
                 return (<li key={taskId}>
                     <form onChange={handleChange.bind(null, task)}>
                         <label>
-                            {/* <input defaultChecked={task?.get('done') || false} */}
-                            <input defaultChecked={task?.get('done') || false}
-                                checked={task?.get('done') || false}
+                            <input checked={task?.get('done') || false}
                                 type="checkbox"
                                 name="done-status"
                             />
