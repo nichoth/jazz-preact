@@ -7,7 +7,7 @@ npm i -S @nichoth/jazz-preact
 ```
 
 ## example
-See [the example folder](./example/). The three functions you need to think about are `WithJazz`, `useJazz`, and `useTelepathicState`.
+See [the example folder](./example/). The three functions you need to think about are [WithJazz](#withjazz), [useJazz](#usejazz), and [useTelepathicState](#usetelepathicstate).
 
 ### WithJazz
 Create the `context` for Jazz.
