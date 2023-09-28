@@ -52,7 +52,7 @@ export function TodoApp () {
 ```
 
 ### useTelepathicState
-Takes an optional `id` attribute, which should be an ID for a `CoValue` that is a todo list.
+Takes an optional `id` attribute, which should be the ID for a `CoValue`. 
 
 ```tsx
 // pages/main.tsx
