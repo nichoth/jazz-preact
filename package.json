@@ -44,7 +44,6 @@
     "vite": "^4.4.9"
   },
   "devDependencies": {
-    "@nichoth/events": "3.1.8",
     "@nichoth/routes": "3.0.7",
     "@preact/preset-vite": "^2.5.0",
     "@socketsupply/tapzero": "^0.7.1",
