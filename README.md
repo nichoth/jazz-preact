@@ -29,7 +29,7 @@ render(<WithJazz useAuth={useLocalAuth}>
 ```
 
 ### useJazz
-Get a reference to a Jazz node. Consume Jazz references anywhere in the view tree like this.
+Get a reference to a Jazz node. Call this in a child node of `WhithJazz`, above.
 
 ```jsx
 // todo-app.tsx
